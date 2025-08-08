@@ -26,11 +26,15 @@ locals {
   }
 }
 
-
+data "turbonomic_cloud_entity_recommendation" "example" {
+  entity_name  = var.repo_name
+  entity_type  = "VirtualMachine"
+  default_size = "t2.nano"
+}
 
 resource "aws_instance" "lab1-vm1" {
   ami           = data.aws_ami.amazon_linux.id
-  instance_type = "t2.nano"
+  instance_type = data.turbonomic_cloud_entity_recommendation.example.new_instance_type
   tags          = merge(local.common_tags, local.lifecycle_tags)
 
   lifecycle {
