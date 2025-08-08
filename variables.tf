@@ -13,5 +13,5 @@ variable "type" {
 variable "repo_name" {
  type        = string
  description = "Unique identifier for a each student session and workspace"
- default     = "{{REPO_NAME}}"
+ default     = "txclab-yevc"
 } 
