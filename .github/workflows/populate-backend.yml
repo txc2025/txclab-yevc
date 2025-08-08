@@ -1,0 +1,38 @@
+name: Populate backend.tf with Repo Name
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  update-backend:
+    if: github.repository != 'txc2025/lab-template' && github.event.before == '0000000000000000000000000000000000000000'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get repo name
+        run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+
+      - name: Replace placeholder in backend.tf
+        run: |
+          sed -i "s/{{REPO_NAME}}/${REPO_NAME}/g" backend.tf
+          sed -i "s/{{REPO_NAME}}/${REPO_NAME}/g" variables.tf
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add backend.tf
+          git add variables.tf
+          git commit -m "Update tf files with repo name"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
